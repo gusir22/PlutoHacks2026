@@ -241,4 +241,4 @@ Validate user input to prevent scripts from being able to run
 
 ## Final reflection
 
-Which vulnerabilities were caused by trusting client input? Which were caused by accidentally exposing data? What defensive controls would you prioritize?
+The importance of testing websites for secruity behore allowing users access to the website can't be understated. From this website, it's been observed how many small mistakes or overlooked things such as comments in HTML can allow breaches of confidential data or give a malicous client access to internal applications. In total, thorough testing and documentation are necessary for the safety of a company's private information.
