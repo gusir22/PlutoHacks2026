@@ -126,9 +126,10 @@ HTTP Method: `GET`
 
 The `robots.txt` file revealed a hidden directory. Navigating to that directory produced a debug-enabled 404 page that provided additional information, allowing the sensitive file to be located.
 
-![Challenge 3 screenshot 1](evidene/alba/c3-1.png)
+![Challenge 3 screenshot 1](evidence/alba/c3-1.png)
 ![Challenge 3 screenshot 2](evidence/alba/c3-2.png)
 ![Challenge 3 screenshot 3](evidence/alba/c3-3.png)
+![Challenge 3 Screenshot 4](evidence/alba/c3-4.png)
 
 **5. Flag captured:** 
 
@@ -189,7 +190,8 @@ Changing the numerical identifier in the URL allowed access to an additional emp
 
 The vulnerability was caused by missing or insufficient object-level authorization checks.
 
-**7. Potential real-world impact:**  
+**7. Potential real-world impact:** 
+
 In a real-world application, an attacker could manipulate URL identifiers to access employee information, customer records, financial documents, or other resources belonging to different users.
 This vulnerability could result in unauthorized data disclosure, privacy violations, and potential identity theft.
 
@@ -201,11 +203,7 @@ Developers should implement server-side authorization checks for every request i
 
 ## Challenge #5 — SQL Injection
 
-**Difficulty:** Medium  **Points:** 100
-
-## Challenge #5 — SQL Injection
-
-**Difficulty:** Medium  **Points:** 100
+**Difficulty:** Medium  **Points:** 150
 
 **1. Vulnerable feature / endpoint:**  
 
@@ -231,6 +229,7 @@ Web browser, Google Search for SQL injection examples, and manual testing of the
 7. Examine the returned results and locate the exposed challenge flag.
 
 **4. Evidence (what happened, screenshot, response or console output):**  
+
 Submitting the SQL injection payload caused the application to return information that should not have been accessible through a normal document search.
 
 ![Challenge 5](evidence/alba/c5-1.png)
@@ -253,25 +252,73 @@ Developers should use parameterized queries instead of constructing SQL statemen
 
 ---
 
-## Challenge #6 — Reflected XSS
 
-**Difficulty:** Medium  **Points:** Medium
+## Challenge #6 — Reflected Cross-Site Scripting (XSS)
+
+**Difficulty:** Medium  **Points:** 150
 
 **1. Vulnerable feature / endpoint:**
 
+The application's "Unsafe Greeting" feature was vulnerable to reflected cross-site scripting (XSS). 
+This allowed JavaScript code submitted through the form to execute in the user's browser.
+
+**Vulnerable URL:**
+
+URL: `http://127.0.0.1:8000/greeting/`
+
+URL containing the XSS payload: `http://127.0.0.1:8000/greeting/?name=%3Cscript%3EclaimXssFlag%28%22reflected%22%29%3C%2Fscript%3E`
+
 **2. Reconnaissance and tools used:**
+
+1. Web browser
+2. Manual form input testing
+3. Cross-Site Scripting (XSS) techniques
+4. JavaScript payload injection
 
 **3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
 
+1. Navigate to `http://127.0.0.1:8000/greeting/`.
+2. Locate the greeting form that accepts a name as user input.
+3. Instead of entering a normal name, insert the following JavaScript payload:
+
+   `<script>claimXssFlag("reflected")</script>`
+
+4. Submit the form.
+5. Observe how the application processes and displays the submitted input.
+6. Because the application does not properly escape the input, the browser interprets the injected `<script>` element as executable JavaScript.
+7. The JavaScript function `claimXssFlag("reflected")` executes, successfully triggering the challenge and revealing the hidden flag.
+
+**HTTP Method:** `GET`
+
 **4. Evidence (what happened, screenshot, response or console output):**
+
+![Challenge 6 screenshot 1](evidence/alba/c6-1.png)
 
 **5. Flag captured:**
 
+The successful execution of `claimXssFlag("reflected")` demonstrated that the application was vulnerable to reflected XSS and resulted in the challenge flag being revealed.
+
+`FLAG{escape_reflected_input}`
+
 **6. Root cause (what made this possible):**
+
+The vulnerability occurred because the application included user-controlled input in its HTML response without applying proper output escaping. When the greeting form received the injected JavaScript payload, the application reflected that input back into the webpage. Instead of treating the submitted characters as plain text, the browser interpreted them as an HTML `<script>` element and executed the JavaScript code. This demonstrated a failure to properly separate untrusted user input from executable webpage content.
 
 **7. Potential real-world impact:**
 
+In a real-world application, reflected XSS could allow attackers to execute malicious JavaScript within another user's browser by convincing them to visit a specially crafted URL.
+
+Depending on the application's security controls, attackers could potentially:
+
+- Modify webpage content to display misleading or malicious information.
+- Redirect users to fraudulent websites.
+- Access sensitive information exposed to JavaScript within the webpage.
+- Perform unauthorized actions using the victim's authenticated session.
+- Display fake login forms to trick users into revealing their credentials.
+
 **8. How a developer should prevent it:**
+
+Developers should ensure that all user-controlled input is handled safely before it is included in an HTML response. Although input validation provides additional protection, **context-appropriate output encoding is the primary defense against reflected XSS**.
 
 ---
 
