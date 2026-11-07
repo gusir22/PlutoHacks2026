@@ -143,6 +143,69 @@ access to our secure areas.
 
 ---
 
+## Challenge #09 — Mass assignment
+
+**Difficulty:** hard  **Points:** 200
+
+**1. Vulnerable feature / endpoint:**
+
+http://127.0.0.1:8000/vip/
+
+**2. Reconnaissance and tools used:**
+
+Inspect Panel Network tab
+
+**3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
+
+Start by submitting the profile settings form while having inspect panel network tab on.
+This will capture a POST request with the profile settings in a json structure. The json
+response also includes the hidden `is_vip` data key. 
+
+Using the inspect panel, we can edit the response and resend it. We modified the destination
+url based on the form's indication to target the VIP area to target `/vip` instead of the default
+`/api/profile` url. We also included the `is_vip` flag set to `true` on the request body.
+
+Once the modified request and posted through the button, we simply navigated to the VIP area, where the flag
+was waiting for us.
+
+**4. Evidence (what happened, screenshot, response or console output):**
+
+![Form Start State](evidence/gus/c9-1.png)
+![Form Correctly Posted](evidence/gus/c9-2.png)
+![Captured Request](evidence/gus/c9-3.png)
+![Unedited POST Request](evidence/gus/c9-4.png)
+![Edited POST Request](evidence/gus/c9-5.png)
+![VIP Area Original State](evidence/gus/c9-6.png)
+![VIP Area Flag](evidence/gus/c9-7.png)
+
+**5. Flag captured:**
+
+`FLAG{allowlist_mutable_fields}`
+
+**6. Root cause (what made this possible):**
+
+This was possible because the web site is allowing and accepting modified
+JSON requests.
+
+**7. Potential real-world impact:**
+
+With this vulnerability, a threat actor can bipass permission checks. This
+makes access control uneffective and can expose data or controls to unauthorized
+users.
+
+**8. How a developer should prevent it:**
+
+I'm actually not entirely sure how to prevent this attack. I do know
+that an API typically has some kind of authentication layer, like a secret
+key, to identify the user/agent making the request and determine if they 
+are authorized to make a request.
+---
+
 ## Final reflection
 
-Which vulnerabilities were caused by trusting client input? Which were caused by accidentally exposing data? What defensive controls would you prioritize?
+What I gathered from this exercise is that it can be extremely easy to have a gap
+within your own app. The slightest mistake or forgotten configuration can expose
+your users data and the entire entegrity of your web app. 
+
+We must constantly audit and test our own security to find these vulnerabilities
+before a threat actor does.
