@@ -81,6 +81,44 @@ should be accompanied with the {% csrf_token %} to prevent
 
 ---
 
+## Challenge #08 — Cookie-based access
+
+**Difficulty:** easy  **Points:** 100
+
+**1. Vulnerable feature / endpoint:**
+http://127.0.0.1:8000/staff/
+
+**2. Reconnaissance and tools used:**
+Inspect Panel Storage and challenge hint
+
+**3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
+Created a new cookie on the browser to set my user role as 'admin'
+
+**4. Evidence (what happened, screenshot, response or console output):**
+![Staff Portal/ Normal Cookie](evidence/gus/c8-1.png)
+![Added Cookie](evidence/gus/c8-2.png)
+
+**5. Flag captured:**
+FLAG{never_trust_client_roles}
+
+**6. Root cause (what made this possible):**
+This was possible because the web site used cookies to set a user's
+role type and permission. Cookies can be created, modified, and deleted.
+
+**7. Potential real-world impact:**
+With this vulnerability, permission controls mean nothing. Any potential
+threat actor can manipulate the browser cookies to gain access to secure
+sections of the website.
+
+**8. How a developer should prevent it:**
+Always check for user role type or permissions through
+the backend and never save sensitive secrets through
+cookies. In Django, we can check permissions in the
+backend through the views, preventing unauthorized
+access to our secure areas.
+
+---
+
 ## Final reflection
 
 Which vulnerabilities were caused by trusting client input? Which were caused by accidentally exposing data? What defensive controls would you prioritize?
