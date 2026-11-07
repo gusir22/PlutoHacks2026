@@ -262,8 +262,6 @@ Developers should use parameterized queries instead of constructing SQL statemen
 The application's "Unsafe Greeting" feature was vulnerable to reflected cross-site scripting (XSS). 
 This allowed JavaScript code submitted through the form to execute in the user's browser.
 
-**Vulnerable URL:**
-
 URL: `http://127.0.0.1:8000/greeting/`
 
 URL containing the XSS payload: `http://127.0.0.1:8000/greeting/?name=%3Cscript%3EclaimXssFlag%28%22reflected%22%29%3C%2Fscript%3E`
@@ -293,6 +291,7 @@ URL containing the XSS payload: `http://127.0.0.1:8000/greeting/?name=%3Cscript%
 **4. Evidence (what happened, screenshot, response or console output):**
 
 ![Challenge 6 screenshot 1](evidence/alba/c6-1.png)
+![Challenge 6 Screenshot 2](evidence/alba/c6-2.png)
 
 **5. Flag captured:**
 
@@ -322,94 +321,72 @@ Developers should ensure that all user-controlled input is handled safely before
 
 ---
 
-## Challenge #___ — ______________________
 
-**Difficulty:** ______  **Points:** ______
+## Challenge #7 — Stored Cross-Site Scripting (XSS)
 
-**1. Vulnerable feature / endpoint:**
-
-**2. Reconnaissance and tools used:**
-
-**3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
-
-**4. Evidence (what happened, screenshot, response or console output):**
-
-**5. Flag captured:**
-
-**6. Root cause (what made this possible):**
-
-**7. Potential real-world impact:**
-
-**8. How a developer should prevent it:**
-
----
-
-## Challenge #___ — ______________________
-
-**Difficulty:** ______  **Points:** ______
+**Difficulty:** Medium  **Points:** 150
 
 **1. Vulnerable feature / endpoint:**
 
-**2. Reconnaissance and tools used:**
+The application's "Guestbook" feature was vulnerable to stored cross-site scripting (XSS). The guestbook allowed users to submit messages that were saved by the application and later displayed on the webpage without properly escaping potentially malicious HTML or JavaScript.
 
-**3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
+Unlike reflected XSS, which executes when malicious input is included in an immediate response, stored XSS involves malicious content being saved and executed whenever the affected content is displayed.
 
-**4. Evidence (what happened, screenshot, response or console output):**
+**Vulnerable URL:**
 
-**5. Flag captured:**
-
-**6. Root cause (what made this possible):**
-
-**7. Potential real-world impact:**
-
-**8. How a developer should prevent it:**
-
----
-
-## Challenge #___ — ______________________
-
-**Difficulty:** ______  **Points:** ______
-
-**1. Vulnerable feature / endpoint:**
+`http://127.0.0.1:8000/guestbook/`
 
 **2. Reconnaissance and tools used:**
 
-**3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
+- Web browser
+- Manual form input testing
+- Cross-Site Scripting (XSS) techniques
+- JavaScript payload injection
+- Guestbook message submission
 
-**4. Evidence (what happened, screenshot, response or console output):**
-
-**5. Flag captured:**
-
-**6. Root cause (what made this possible):**
-
-**7. Potential real-world impact:**
-
-**8. How a developer should prevent it:**
-
----
-
-## Challenge #___ — ______________________
-
-**Difficulty:** ______  **Points:** ______
-
-**1. Vulnerable feature / endpoint:**
-
-**2. Reconnaissance and tools used:**
+The investigation focused on determining whether the guestbook safely handled user-submitted messages or allowed HTML and JavaScript to be stored and executed when the messages were displayed.
 
 **3. Steps to reproduce (include URL, HTTP method, input or browser-console command):**
 
+1. Navigate to `http://127.0.0.1:8000/guestbook/`.
+2. Locate the guestbook form and identify the message input field.
+3. Instead of entering a normal message, submit HTML containing JavaScript designed to trigger the challenge's flag mechanism.
+4. Submit the guestbook form to save the message.
+5. Observe how the application processes and displays the submitted content.
+6. Reload the guestbook page to determine whether the injected content persists.
+7. If the application renders the stored content without proper escaping, the browser executes the injected JavaScript.
+8. Successful execution triggers the challenge's flag mechanism and reveals the hidden flag.
+
 **4. Evidence (what happened, screenshot, response or console output):**
+
+The guestbook accepted a message containing executable JavaScript and stored it as part of the application's content. When the affected message was displayed, the application rendered the submitted content without properly escaping it, allowing the JavaScript to execute in the browser.
+
+This behavior demonstrated a stored XSS vulnerability and resulted in the challenge flag being revealed.
+
+![Challenge 7 screenshot](evidence/alba/c6-2.png)
 
 **5. Flag captured:**
 
+`FLAG{sanitize_stored_content}`
+
 **6. Root cause (what made this possible):**
+
+The vulnerability occurred because the application stored user-submitted content and later rendered it in the webpage without appropriate output escaping or sanitization. The guestbook treated untrusted user input as HTML rather than ordinary text. Consequently, when a browser loaded the affected message, it could interpret embedded JavaScript as executable code.
+
+Unlike reflected XSS, the malicious content remained stored within the application, potentially affecting multiple visitors without requiring the attacker to submit the payload again.
+
+The underlying security weakness was the application's failure to safely handle untrusted content before displaying it to other users.
 
 **7. Potential real-world impact:**
 
+In a real-world application, stored XSS could allow attackers to inject malicious JavaScript into content that is later viewed by other users. Stored XSS can be particularly dangerous because the malicious payload persists within the application and can execute repeatedly whenever users access the affected webpage.
+
 **8. How a developer should prevent it:**
+
+Developers should ensure that all user-generated content is safely handled before being displayed on a webpage.
 
 ---
 
 ## Final reflection
 
-Which vulnerabilities were caused by trusting client input? Which were caused by accidentally exposing data? What defensive controls would you prioritize?
+Through this project, I gained a deeper understanding of the various security vulnerabilities that can affect web applications, as a Web Developer this is extremely valuable. I found Challenge #3 particularly interesting because it demonstrated how information that appears to be hidden can still be discovered through publicly accessible files and debugging information. This experience reinforced the importance of implementing proper security measures rather than relying on obscurity to protect sensitive data. Overall, the project strengthened my cybersecurity knowledge, improved my practical problem-solving skills, and increased my documentation skils and confidence in identifying and analyzing web application vulnerabilities.
