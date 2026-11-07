@@ -1,6 +1,6 @@
 # Northstar CTF — Investigation report
 
-**Student:** ______________________  **Date:** ______________
+**Student:** Albany Tafuro  **Date:** 11/07/2026
 
 For each of the ten exercises record the following:
 
